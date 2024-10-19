@@ -1,0 +1,206 @@
+swagger: "2.0"
+info:
+  title: Product Management API
+  description: API for managing products including listing, adding, updating, and deleting products.
+  version: 1.0.0
+  contact:
+    email: prajjawal.tiwari.0311@gmail.com
+
+basePath: /products
+
+paths:
+  /:
+    get:
+      summary: "Get all products"
+      description: "Fetch all available products."
+      operationId: "getAllProducts"
+      responses:
+        200:
+          description: A list of all products
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    post:
+      summary: "Add a new product"
+      description: "Admin only - Add a new product to the catalog."
+      operationId: "addNewProduct"
+      parameters:
+        - in: body
+          name: body
+          description: Product details to add
+          required: true
+          schema:
+            $ref: '#/definitions/NewProductRequest'
+      responses:
+        201:
+          description: New product added successfully
+          schema:
+            $ref: '#/definitions/Product'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /{id}:
+    get:
+      summary: "Get product by ID"
+      description: "Fetch product details by product ID."
+      operationId: "getProductById"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to fetch
+          required: true
+          type: string
+      responses:
+        200:
+          description: Product details
+          schema:
+            $ref: '#/definitions/Product'
+        404:
+          description: Product not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    put:
+      summary: "Update product by ID"
+      description: "Admin only - Update a product by its ID."
+      operationId: "updateProduct"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to update
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Updated product details
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateProductRequest'
+      responses:
+        200:
+          description: Product updated successfully
+          schema:
+            $ref: '#/definitions/Product'
+        404:
+          description: Product not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        400:
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    delete:
+      summary: "Delete product by ID"
+      description: "Admin only - Delete a product by its ID."
+      operationId: "deleteProduct"
+      parameters:
+        - name: id
+          in: path
+          description: ID of the product to delete
+          required: true
+          type: string
+      responses:
+        200:
+          description: Product deleted successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Product deleted successfully
+        404:
+          description: Product not found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+  Product:
+    type: object
+    required:
+      - name
+      - price
+      - category
+    properties:
+      id:
+        type: string
+        description: Unique identifier for the product
+      name:
+        type: string
+        description: Name of the product
+      price:
+        type: number
+        description: Price of the product
+      category:
+        type: string
+        description: Category the product belongs to
+      description:
+        type: string
+        description: Detailed description of the product
+      stock:
+        type: integer
+        description: Available stock for the product
+
+  NewProductRequest:
+    type: object
+    required:
+      - name
+      - price
+      - category
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      category:
+        type: string
+      description:
+        type: string
+      stock:
+        type: integer
+
+  UpdateProductRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      category:
+        type: string
+      description:
+        type: string
+      stock:
+        type: integer
+
+  ErrorModel:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
